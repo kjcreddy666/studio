@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio UI design</title>
+<meta name="description" content="UI design for Studio, an IDE where a human and agents build software together: principles, actor language, tokens, components, thirteen screens, flows, and accessibility.">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/studio.css">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body class="doc">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <a class="brand" href="./"><span class="g-ai" aria-hidden="true">◆</span> Studio UI design</a>
+  <nav class="topnav" aria-label="Site">
+    <a class="plain" href="../../index.html">Design set</a>
+    <a class="plain" href="#screens">Screens</a>
+    <a class="plain" href="#tokens">Tokens</a>
+    <a class="cta" href="prototype.html">Open the prototype</a>
+  </nav>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Contents">
+    <div class="lbl">Contents</div>
+    <ol>
+      <li><a href="#intent">Design intent</a></li>
+      <li><a href="#anatomy">Window anatomy</a></li>
+      <li><a href="#actors">Actor language</a></li>
+      <li><a href="#tokens">Design tokens</a></li>
+      <li><a href="#layout">Layout metrics</a></li>
+      <li><a href="#components">Components</a></li>
+      <li><a href="#screens">Screens</a></li>
+      <li><a href="#flows">Key flows</a></li>
+      <li><a href="#states">States and edge cases</a></li>
+      <li><a href="#keyboard">Keyboard</a></li>
+      <li><a href="#a11y">Accessibility</a></li>
+      <li><a href="#writing">Writing for the UI</a></li>
+      <li><a href="#handoff">Implementation handoff</a></li>
+    </ol>
+  </nav>
+
+  <main id="main" class="content">
+    <div class="kicker">Design 3 of 3 · Proposed · 2026-10-30</div>
+    <h1>Studio UI design</h1>
+    <p class="lede">IntelliJ’s brain, Apple’s body, and a seat at the table for agents.</p>
+    <p>Studio is a macOS IDE where you and several agents work on the same code at once. This design covers ARCHITECTURE §11.1, §11.3, §16, Appendix A rows U01–U07 and C09–C12, and the collaboration surfaces proposed in Design 1 §12 (presence, the Needs-you queue, the ask-human tool, Mission Control). Dark appearance is shown throughout; the light values sit next to every token.</p>
+    <div class="hero-actions"><a class="cta" href="prototype.html">Open the interactive prototype</a><a class="cta ghost" href="#screens">See all 13 screens</a><a class="cta ghost" href="assets/tokens.css">tokens.css</a></div>
+
+    <section id="intent" aria-labelledby="intent-h">
+      <h2 id="intent-h">1. Design intent</h2>
+      <div class="grid c2">
+        <div class="pcard"><div class="n">01</div><h3>Calm canvas, live edges</h3><p>The editor stays quiet and opaque. Agent activity lives at the edges (tool windows, gutter, status bar, toolbar pill) and comes forward when you ask for it.</p></div>
+        <div class="pcard"><div class="n">02</div><h3>Every change has a face</h3><p>Wherever code or a diff appears, its author is visible by shape, color, and name: you, an agent session, Studio, or something external.</p></div>
+        <div class="pcard"><div class="n">03</div><h3>Agents are colleagues, not pop-ups</h3><p>Agents have names, presence, status, and a conversation. They show up like teammates in a shared document, not as modal dialogs.</p></div>
+        <div class="pcard"><div class="n">04</div><h3>You hold the pen</h3><p>Nothing reaches your main tree without your acceptance unless you chose in place. Risky actions ask first. Reverting agent work is one click.</p></div>
+        <div class="pcard"><div class="n">05</div><h3>Attention is a queue, not a siren</h3><p>One Needs-you queue collects approvals, questions, reviews, and failures, and you can triage it from the keyboard. Nothing steals focus while you type.</p></div>
+        <div class="pcard"><div class="n">06</div><h3>Keyboard first, mouse friendly</h3><p>Every flow completes without a pointer. JetBrains-compatible keymap by default.</p></div>
+        <div class="pcard"><div class="n">07</div><h3>Native first</h3><p>Real macOS menus, sheets, popovers, vibrancy, and SF fonts. Web imitations only where the host cannot do better.</p></div>
+        <div class="pcard"><div class="n">08</div><h3>Accessible by construction</h3><p>Never color alone. Contrast is checked numerically. Reduce Motion, Reduce Transparency, and Increase Contrast are honored.</p></div>
+      </div>
+    </section>
+
+    <section id="anatomy" aria-labelledby="anatomy-h">
+      <h2 id="anatomy-h">2. Window anatomy</h2>
+      <p>IntelliJ’s layout (ARCHITECTURE §16) with four collaboration surfaces added, marked <span class="star">★</span>. Tool-window stripes run the full height; the bottom tool window spans between them, as in IntelliJ’s new UI.</p>
+      <div class="anatomy" role="img" aria-label="Window layout: toolbar across the top; left stripe and panel; editor in the center; right panel and stripe; bottom tool window between the stripes; status bar along the bottom.">
+        <div class="a-toolbar"><strong>Toolbar</strong>project and branch switchers · run configuration · <span class="star">★</span> agent pill · <span class="star">★</span> Needs you · Delegate · Search · Settings</div>
+        <div class="a-sl" aria-hidden="true"></div>
+        <div class="a-left"><strong>Left tool windows</strong>Project · Structure · Git · <span class="star">★</span> Agents · Learning</div>
+        <div class="a-ed"><strong>Editor</strong>tabs with author badges · breadcrumbs · provenance gutter · <span class="star">★</span> presence cursors · banners</div>
+        <div class="a-right"><strong>Right tool windows</strong>AI Changes · Review Inbox · Notes · Preview</div>
+        <div class="a-sr" aria-hidden="true"></div>
+        <div class="a-bottom"><strong>Bottom tool windows</strong>Terminal (tracked) · Run · Problems · Agent Console</div>
+        <div class="a-status"><strong style="display:inline">Status bar</strong> · branch · LSP · <span class="star">★</span> agents and unreviewed AI hunks · encoding · cursor</div>
+      </div>
+      <div class="tbl"><table class="t">
+        <thead><tr><th scope="col">Region</th><th scope="col">Contents</th><th scope="col">Collaboration role</th></tr></thead>
+        <tbody>
+          <tr><td>Toolbar, left</td><td>traffic lights, project and branch switchers</td><td>—</td></tr>
+          <tr><td>Toolbar, center</td><td>run configuration selector, Run, Stop, Rerun</td><td>—</td></tr>
+          <tr><td>Toolbar, right <span class="star">★</span></td><td>agent status pill, Needs-you button with count, Delegate, Search Everywhere, Settings</td><td>ambient awareness; one-click triage and delegation</td></tr>
+          <tr><td>Left tool windows</td><td>Project, Structure, Git, <strong>Agents</strong>, Learning; Terminal, Problems, Agent Console, and Run toggles at the bottom of the stripe</td><td>Agents docks here or opens Mission Control as a tab</td></tr>
+          <tr><td>Editor</td><td>tabs with author badges, breadcrumbs, provenance gutter, presence cursors, banners</td><td>where you and an agent meet in the code</td></tr>
+          <tr><td>Right tool windows</td><td>AI Changes, Review Inbox, Notes, Preview</td><td>review surfaces</td></tr>
+          <tr><td>Bottom tool windows</td><td>Terminal, Run, Problems, Agent Console</td><td>tracked terminals; agent transcripts</td></tr>
+          <tr><td>Status bar</td><td>branch, LSP, <strong>agent count and unreviewed AI hunks</strong>, encoding, line ending, cursor</td><td>always-on summary</td></tr>
+        </tbody>
+      </table></div>
+      <p>Modes: Normal, Distraction-free (agent activity collapses to the status bar), and Presentation (U07, P3).</p>
+    </section>
+
+    <section id="actors" aria-labelledby="actors-h">
+      <h2 id="actors-h">3. Actor language</h2>
+      <p>The most important visual system in the product. It answers “who wrote this?” without hovering, without color, and without reading.</p>
+      <div class="tbl"><table class="t">
+        <thead><tr><th scope="col">Actor</th><th scope="col">Glyph</th><th scope="col">Dark</th><th scope="col">Light</th><th scope="col">Gutter mark</th><th scope="col">Spoken label (VoiceOver)</th></tr></thead>
+        <tbody>
+          <tr><td>You</td><td><span class="g-you">●</span> circle</td><td class="nowrap"><span class="swatch" style="background:#5AA7FF"></span> <span class="hex">#5AA7FF</span></td><td class="nowrap"><span class="swatch" style="background:#0A63C9"></span> <span class="hex">#0A63C9</span></td><td><span class="gm m-you"></span> solid bar</td><td>“Changed by you”</td></tr>
+          <tr><td>Agent</td><td><span class="g-ai">◆</span> diamond</td><td class="nowrap"><span class="swatch" style="background:#B79CFF"></span> <span class="hex">#B79CFF</span></td><td class="nowrap"><span class="swatch" style="background:#6E3FD1"></span> <span class="hex">#6E3FD1</span></td><td><span class="gm m-ai"></span> notched bar</td><td>“Changed by Claude, session token-refresh, turn 3”</td></tr>
+          <tr><td>Agent, then you</td><td><span class="g-ai">◆</span><span class="g-you">●</span></td><td>violet over blue</td><td>violet over blue</td><td><span class="gm m-aiyou"></span> notched above, solid below</td><td>“Written by Claude, then edited by you”</td></tr>
+          <tr><td>External</td><td><span class="g-ext">▲</span> triangle</td><td class="nowrap"><span class="swatch" style="background:#F2B44B"></span> <span class="hex">#F2B44B</span></td><td class="nowrap"><span class="swatch" style="background:#8F5600"></span> <span class="hex">#8F5600</span></td><td><span class="gm m-ext"></span> hatched bar</td><td>“Changed outside Studio”</td></tr>
+          <tr><td>Studio</td><td><span class="g-studio">■</span> square</td><td class="nowrap"><span class="swatch" style="background:#9BA3AF"></span> <span class="hex">#9BA3AF</span></td><td class="nowrap"><span class="swatch" style="background:#5A6170"></span> <span class="hex">#5A6170</span></td><td><span class="gm m-studio"></span> hollow bar</td><td>“Changed by the Studio formatter”</td></tr>
+        </tbody>
+      </table></div>
+      <ul>
+        <li><strong>Confidence.</strong> Anything not certain (for example a CLI started by hand without the opt-in hook) shows its gutter mark at reduced opacity, adds “likely” to the line card, and keeps the shape. Ambiguous changes use a dotted outline. Try turning off precise tracking in the prototype’s Settings: the marks fade.</li>
+        <li><strong>Session hues.</strong> Each running agent session gets a hue for its presence cursor, card, and console header: <span style="color:var(--hue-violet)">◆ violet</span>, <span style="color:var(--hue-pink)">◆ pink</span>, <span style="color:var(--hue-cyan)">◆ cyan</span>, <span style="color:var(--hue-lime)">◆ lime</span>, <span style="color:var(--hue-orange)">◆ orange</span>, assigned round-robin. The diamond never changes. In the gutter every agent mark is violet, because the gutter answers “agent or me?”; the line card names the session.</li>
+        <li><strong>Shapes first, color second.</strong> All five gutter marks stay distinguishable in grayscale and for every common color-vision deficiency.</li>
+      </ul>
+    </section>
+
+    <section id="tokens" aria-labelledby="tokens-h">
+      <h2 id="tokens-h">4. Design tokens</h2>
+      <p>Every value below is read from <a href="assets/tokens.css">tokens.css</a>, the file task T10 copies into <code>app/ui/src/theme/tokens.css</code>. Contrast is computed in your browser from those values (WCAG 2.x): text against the editor, panel, and card surfaces (dark) or the editor, panel, and chrome surfaces (light), keeping the lowest; controls and hues need 3:1; fills need 4.5:1 with a white label.</p>
+      <h3>Surfaces and lines</h3><div class="tbl" data-token-table="surfaces"></div>
+      <h3>Text and accent</h3><div class="tbl" data-token-table="text"></div>
+      <h3>Status, actors, and session hues</h3><div class="tbl" data-token-table="status"></div>
+      <h3>Diff and attribution tints</h3><div class="tbl" data-token-table="diff"></div>
+      <h3>Type, space, shape, motion</h3>
+      <div class="tbl"><table class="t"><tbody>
+        <tr><td>UI font</td><td>SF Pro Text, falling back to Inter on other systems (<code>--font-ui</code>)</td></tr>
+        <tr><td>Code font</td><td>SF Mono, falling back to JetBrains Mono (<code>--font-code</code>); both switchable</td></tr>
+        <tr><td>Type scale</td><td><span style="font-size:11px">11 caption</span> · <span style="font-size:12px">12 small</span> · <span style="font-size:13px">13 body (macOS default)</span> · <span style="font-size:15px">15 headline</span> · <span style="font-size:17px">17 sheet title</span> · <span style="font-size:22px">22 large title</span>. Code 13 (10–24 setting), line height 1.5; UI line height 1.35</td></tr>
+        <tr><td>Weights</td><td>400 regular · 500 medium for labels · 600 semibold for titles</td></tr>
+        <tr><td>Spacing</td><td>4-pt grid: 2, 4, 8, 12, 16, 20, 24, 32</td></tr>
+        <tr><td>Radii</td><td>4 controls and badges · 6 cards and inputs · 8 popovers · 12 sheets</td></tr>
+        <tr><td>Elevation</td><td>e1 cards: hairline border · e2 popovers: <code>0 8px 24px rgba(0,0,0,.45)</code> · e3 sheets: <code>0 20px 60px rgba(0,0,0,.55)</code>; light mode uses about a third of the opacity</td></tr>
+        <tr><td>Motion</td><td>120 ms toggles · 180 ms panels and popovers · 260 ms sheets · easing <code>cubic-bezier(.2,.8,.2,1)</code> · presence pulse 1.6 s. Nothing animates on hot paths (typing, terminal output). Reduce Motion removes slides and pulses</td></tr>
+        <tr><td>Layers</td><td>base 0 · sticky 10 · dock overlay 20 · popover 30 · sheet 40 · toast 50 · palette 60</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="layout" aria-labelledby="layout-h">
+      <h2 id="layout-h">5. Layout metrics</h2>
+      <div class="tbl"><table class="t">
+        <thead><tr><th scope="col">Element</th><th scope="col">Size</th></tr></thead>
+        <tbody>
+          <tr><td>Toolbar (unified, overlay title bar)</td><td>52 px</td></tr>
+          <tr><td>Tool-window stripes</td><td>40 px wide, 28 px icon buttons</td></tr>
+          <tr><td>Tool-window header</td><td>30 px</td></tr>
+          <tr><td>Editor tabs / breadcrumbs</td><td>34 px / 26 px</td></tr>
+          <tr><td>Status bar</td><td>24 px</td></tr>
+          <tr><td>Gutter</td><td>line numbers, then a 6 px provenance lane, then the fold lane</td></tr>
+          <tr><td>Default panel sizes</td><td>left 272 (min 180) · right 344 (min 260) · bottom 190 (min 120); all resizable by dragging</td></tr>
+          <tr><td>Rows</td><td>tree 24 px, lists 28–32 px (Compact density: −2 px)</td></tr>
+          <tr><td>Pointer targets</td><td>at least 24 × 24 px</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="components" aria-labelledby="components-h">
+      <h2 id="components-h">6. Components</h2>
+      <p>Live components rendered with the same CSS the prototype uses (<a href="assets/studio.css">studio.css</a>).</p>
+      <div class="grid c2">
+
+        <div class="demo"><h3>ActorChip</h3>
+          <div class="stage studio">
+            <span class="chip" style="padding-right:10px"><span class="g-ai">◆</span>token-refresh<span class="soft">editing</span></span>
+            <span class="chip" style="padding-right:10px;border-color:var(--warn-border)"><span style="color:var(--hue-pink)">◆</span>checkout-tests<span style="color:var(--warning)">needs you</span></span>
+            <span class="chip" style="padding-right:10px"><span style="color:var(--hue-lime)">◆</span>rate-limit<span style="color:var(--success)">ready</span></span>
+            <span class="chip" style="padding-right:10px;border-color:#5A2A26"><span style="color:var(--hue-orange)">◆</span>old-task<span style="color:var(--danger)">failed</span></span>
+          </div>
+          <dl><dt>Anatomy</dt><dd>glyph · name · session hue · optional mode badge (In place / Worktree / Scratch)</dd><dt>States</dt><dd>idle, active (pulse), waiting (amber ring), done, failed</dd><dt>A11y</dt><dd>label reads actor, session, and activity</dd></dl>
+        </div>
+
+        <div class="demo"><h3>Provenance gutter and presence cursor</h3>
+          <div class="stage studio col" style="gap:0;padding:8px 0;font-family:var(--font-code);font-size:13px;overflow-x:auto">
+            <div class="cl"><span class="ln">12</span><span class="gut m-you"></span><span class="src"><span class="k">export function</span> <span class="f">isExpired</span>(s: <span class="ty">Session</span>) {</span></div>
+            <div class="cl t-ai"><span class="ln">16</span><span class="gut m-ai"></span><span class="src"><span class="k">export async function</span> <span class="f">refreshIfNeeded</span>(s) {</span></div>
+            <div class="cl t-ai"><span class="ln">19</span><span class="gut m-aiyou"></span><span class="src">  <span class="k">const</span> next = <span class="k">await</span> <span class="f">rotate</span>(s.refresh, { retries: <span class="n">1</span> })</span></div>
+            <div class="cl t-ai"><span class="ln">26</span><span class="gut m-ai"></span><span class="src">  <span class="k">return</span> <span class="f">setTimeout</span>(run, delay)</span><span class="presence"><span class="caret" aria-hidden="true"></span><span class="flag">◆ Claude · token-refresh</span></span></div>
+          </div>
+          <dl><dt>Gutter</dt><dd>6 px lane, marks from the actor table; click for the line card (who, turn, tool, time, confidence, View diff, Revert)</dd><dt>Presence</dt><dd>caret and flag in the session hue; announced politely once per file</dd></dl>
+        </div>
+
+        <div class="demo"><h3>Status pill and Needs-you button</h3>
+          <div class="stage studio">
+            <span class="pill" role="img" aria-label="3 agents, 2 need you"><span class="g-ai">◆</span>3 agents <span class="sep">·</span> <span class="attn">2 need you</span></span>
+            <span class="tbtn needs" style="cursor:default"><span style="color:var(--warning);display:inline-flex"><i data-icon="tray" data-size="md"></i></span> Needs you <span class="count">3</span></span>
+          </div>
+          <dl><dt>Pill</dt><dd>color follows the most urgent state; opens Mission Control</dd><dt>Needs you</dt><dd>count of open attention items; opens the queue (⌥⌘Y); pulses once on arrival, never steals focus</dd></dl>
+        </div>
+
+        <div class="demo"><h3>Buttons</h3>
+          <div class="stage studio">
+            <button type="button" class="btn btn-primary">Primary</button>
+            <button type="button" class="btn">Secondary</button>
+            <button type="button" class="btn btn-accept">Accept</button>
+            <button type="button" class="btn btn-danger">Interrupt</button>
+            <button type="button" class="btn" disabled>Disabled</button>
+          </div>
+          <dl><dt>Primary</dt><dd>white on <code>--accent-fill</code>, 4.8 : 1</dd><dt>Accept</dt><dd>white on <code>--accept-fill</code>, 6.2 : 1</dd></dl>
+        </div>
+
+        <div class="demo"><h3>ModeToggle</h3>
+          <div class="studio">
+            <div class="seg" role="group" aria-label="Show changes by" data-demo="seg">
+              <button type="button" aria-pressed="true" data-say="Agent lines are marked and tinted; your lines stay plain.">AI only</button>
+              <button type="button" aria-pressed="false" data-say="Your lines (before and during the session) are marked; agent-only lines stay plain.">Mine</button>
+              <button type="button" aria-pressed="false" data-say="Every change since the last commit is marked by its author.">Everything</button>
+            </div>
+            <p class="soft small" data-demo-out style="margin:8px 0 0">Agent lines are marked and tinted; your lines stay plain.</p>
+          </div>
+          <dl><dt>Role</dt><dd>radio-like group with <code>aria-pressed</code>; drives the gutter, AI Changes lists, and diff filters</dd></dl>
+        </div>
+
+        <div class="demo"><h3>Trust picker</h3>
+          <div class="studio">
+            <div class="seg" role="group" aria-label="Trust" data-demo="seg">
+              <button type="button" aria-pressed="false" data-say="Reads and explains. Cannot edit files or run anything that changes them.">Observe</button>
+              <button type="button" aria-pressed="true" data-say="Edits inside its worktree and runs build and test commands. Asks before installs, network access, or anything else.">Propose</button>
+              <button type="button" aria-pressed="false" data-say="Edits your working tree, tracked line by line. Asks before touching a file you have unsaved changes in.">Pair</button>
+              <button type="button" aria-pressed="false" data-say="Runs everything except denylisted commands without asking. Allowed only in a worktree.">Autopilot</button>
+            </div>
+            <p class="soft small" data-demo-out style="margin:8px 0 0">Edits inside its worktree and runs build and test commands. Asks before installs, network access, or anything else.</p>
+          </div>
+          <dl><dt>Rule</dt><dd>Autopilot disables when “Where” is not a worktree</dd></dl>
+        </div>
+
+        <div class="demo"><h3>AgentCard</h3>
+          <div class="stage studio col">
+            <article class="card" aria-label="token-refresh, working">
+              <div class="chead"><span class="g-ai">◆</span><span class="name">token-refresh</span><span class="badge">IN PLACE · TERMINAL 2</span><span class="badge soft">Pair</span><span class="spacer"></span><span class="muted small">6 min</span></div>
+              <div class="soft small">Silent token refresh 60 s before expiry</div>
+              <div class="step"><span class="dot pulse" style="background:var(--hue-violet)" aria-hidden="true"></span>Editing src/auth/session.ts</div>
+              <div class="row" style="gap:8px"><div class="plan" role="img" aria-label="Plan: 3 of 5 steps done"><span style="background:var(--hue-violet)"></span><span style="background:var(--hue-violet)"></span><span style="background:var(--hue-violet)"></span><span></span><span></span></div><span class="muted small">plan 3/5</span></div>
+              <div class="row"><button type="button" class="btn btn-sm">Open console</button><button type="button" class="btn btn-sm">AI Changes</button><button type="button" class="btn btn-sm btn-danger">Interrupt</button></div>
+            </article>
+          </div>
+          <dl><dt>States</dt><dd>Starting, Working, Needs you, Review ready, Done, Failed, Cancelled</dd><dt>A11y</dt><dd>the card is a labelled group; actions follow in tab order</dd></dl>
+        </div>
+
+        <div class="demo"><h3>Approval panel</h3>
+          <div class="stage studio col">
+            <div class="row" style="font-weight:600"><span style="color:var(--hue-pink)">◆</span> checkout-tests wants to run a command</div>
+            <code class="cmd">npm install --save-dev msw@2</code>
+            <div class="risk"><span class="dot" style="background:var(--warning)" aria-hidden="true"></span>Medium risk · installs packages · network access</div>
+            <div class="row"><button type="button" class="btn">Deny <kbd>⌘⌫</kbd></button><button type="button" class="btn btn-primary">Allow once <kbd>⌘↩</kbd></button><button type="button" class="btn">Allow for this session</button></div>
+          </div>
+          <dl><dt>Content</dt><dd>requester, command, working directory, the agent’s reason, risk with reasons, matched rule</dd><dt>Rule</dt><dd>never takes focus; high risk needs a deliberate click or Touch ID</dd></dl>
+        </div>
+
+        <div class="demo"><h3>HunkCard</h3>
+          <div class="stage studio col">
+            <article class="hunk" data-demo="hunk" aria-label="Hunk from turn 4">
+              <div class="hhead"><span class="g-ai">◆</span><strong>Claude · rate-limit</strong><span class="soft">turn 4 · Edit · L18–21</span><span class="spacer"></span><span class="decide row" style="gap:6px"><button type="button" class="btn btn-sm btn-accept" data-say="Accepted">Accept</button><button type="button" class="btn btn-sm" data-say="Rejected">Reject</button></span></div>
+              <div class="diff"><div class="dl"><span class="no">18</span><span class="sg"></span><span class="tx">app.use(cors())</span></div><div class="dl del"><span class="no">19</span><span class="sg">−</span><span class="tx">app.use("/api", routes)</span></div><div class="dl add"><span class="no">19</span><span class="sg">+</span><span class="tx">app.use("/api", rateLimit(config.rateLimit))</span></div></div>
+            </article>
+          </div>
+          <dl><dt>States</dt><dd>pending, accepted, rejected (collapsed), conflict (amber, “Resolve…”)</dd><dt>Keys</dt><dd>J / K move · A accept · X reject</dd></dl>
+        </div>
+
+        <div class="demo"><h3>Timeline</h3>
+          <div class="stage studio">
+            <div class="timeline big" role="img" aria-label="Three turns: reads, edits, and commands">
+              <span class="tk"><span class="turn">1</span></span><span class="tk"><span class="read"></span></span><span class="tk"><span class="edit"></span></span><span class="tk"><span class="bash"></span></span><span class="tk"><span class="turn">2</span></span><span class="tk"><span class="edit"></span></span><span class="tk"><span class="bash"></span></span><span class="tk"><span class="turn">3</span></span><span class="tk"><span class="edit"></span></span><span class="tk"><span class="edit live"></span></span>
+            </div>
+          </div>
+          <dl><dt>Marks</dt><dd>numbered circles are turns; diamonds edits, squares commands, circles reads; a halo marks the live step</dd><dt>Keys</dt><dd>← / → move between ticks; selecting one shows only that step’s diff</dd></dl>
+        </div>
+
+        <div class="demo"><h3>Banners</h3>
+          <div class="stage studio col">
+            <div class="banner round ai"><span class="g-ai">◆</span><span class="grow">Claude is editing this file. Saving will merge.</span><button type="button" class="linkbtn">View diff</button></div>
+            <div class="banner round warn"><span class="g-ext">▲</span><span class="grow">Tracking degraded for 40 s. Changes in that window are marked likely.</span></div>
+          </div>
+          <dl><dt>Kinds</dt><dd>contested, tracking, degraded tracking, CLI missing; <code>role="status"</code></dd></dl>
+        </div>
+
+        <div class="demo"><h3>Context chips and author badges</h3>
+          <div class="stage studio">
+            <span class="chip"><span class="muted">@</span>session.ts<button type="button" aria-label="Remove session.ts" data-demo="chip">×</button></span>
+            <span class="chip"><span class="muted">@</span>selection 18–29<button type="button" aria-label="Remove selection" data-demo="chip">×</button></span>
+            <span class="chip"><span class="muted">@</span>Problems (2)<button type="button" aria-label="Remove Problems" data-demo="chip">×</button></span>
+          </div>
+          <div class="stage studio" style="font-size:12px">
+            <span>session.ts <span class="glyphs"><span class="g-ai">◆</span><span class="g-you">●</span></span></span>
+            <span>tokens.ts <span class="glyphs"><span class="g-ai">◆</span></span></span>
+            <span>checkout.ts <span class="glyphs"><span class="g-you">●</span></span></span>
+            <span>schema.sql <span class="glyphs"><span class="g-ext">▲</span></span></span>
+          </div>
+          <dl><dt>Badges</dt><dd>◆ agent touched it this session · ● you modified it · ◆● both · ▲ external; included in each item’s label</dd></dl>
+        </div>
+      </div>
+    </section>
+
+    <section id="screens" aria-labelledby="screens-h">
+      <h2 id="screens-h">7. Screens</h2>
+      <p>Each preview is the live prototype, scaled down. Open one to use it at full size; the review bar there lists what to try on each screen.</p>
+      <div class="shots">
+        <a class="shot" id="screen-s1" href="prototype.html#workspace"><div class="frame"><iframe src="prototype.html?embed=1#workspace" loading="lazy" title="S1 Workspace preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S1</div><h3>Workspace</h3><p>Your earlier edits show solid blue bars, the agent’s lines notched violet bars, and a line you changed after the agent shows half of each. The presence cursor marks where the agent is typing; the banner says your saves merge rather than overwrite.</p><span class="go">Open S1 →</span></div></a>
+        <a class="shot" id="screen-s2" href="prototype.html#mission-control"><div class="frame"><iframe src="prototype.html?embed=1#mission-control" loading="lazy" title="S2 Mission Control preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S2</div><h3>Mission Control</h3><p>Every agent session as a card, in columns by state: Needs you, Working, Review ready, Done. Blocking items come first, and approvals and answers happen right on the card.</p><span class="go">Open S2 →</span></div></a>
+        <a class="shot" id="screen-s3" href="prototype.html#delegate"><div class="frame"><iframe src="prototype.html?embed=1#delegate" loading="lazy" title="S3 Delegate preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S3</div><h3>Delegate</h3><p>A sheet from the toolbar: what to do, context chips, agent, where it runs (worktree, in place, terminal), trust profile, done-when criteria, and a time limit. Defaults: worktree and Propose.</p><span class="go">Open S3 →</span></div></a>
+        <a class="shot" id="screen-s4" href="prototype.html#ai-changes"><div class="frame"><iframe src="prototype.html?embed=1#ai-changes" loading="lazy" title="S4 AI Changes preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S4</div><h3>AI Changes</h3><p>One session’s changes by turn and tool call, with the AI only / Mine / Everything filter and a starting point. Your edits from before the session sit apart as “Your earlier changes”. Hunks can be marked reviewed or reverted.</p><span class="go">Open S4 →</span></div></a>
+        <a class="shot" id="screen-s5" href="prototype.html#review"><div class="frame"><iframe src="prototype.html?embed=1#review" loading="lazy" title="S5 Review Inbox preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S5</div><h3>Review Inbox</h3><p>Worktree results, file by file and hunk by hunk. Nothing is written until you Apply. A hunk that overlaps your uncommitted edit offers Resolve, which opens a 3-way merge.</p><span class="go">Open S5 →</span></div></a>
+        <a class="shot" id="screen-s6" href="prototype.html#approval"><div class="frame"><iframe src="prototype.html?embed=1#approval" loading="lazy" title="S6 Approval preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S6</div><h3>Approval</h3><p>The Needs-you popover with a headless agent’s request: command, reason, risk, and the rule it hit. Allow once, for the session, or remember it for the project. The same content appears in native notifications.</p><span class="go">Open S6 →</span></div></a>
+        <a class="shot" id="screen-s7" href="prototype.html#question"><div class="frame"><iframe src="prototype.html?embed=1#question" loading="lazy" title="S7 Question preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S7</div><h3>Question</h3><p>An agent asks with options. You pick one or answer in your own words, and the answer returns to the agent as the result of its question.</p><span class="go">Open S7 →</span></div></a>
+        <a class="shot" id="screen-s8" href="prototype.html#console"><div class="frame"><iframe src="prototype.html?embed=1#console" loading="lazy" title="S8 Agent Console preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S8</div><h3>Agent Console</h3><p>The conversation: your prompts, the agent’s messages, collapsible tool calls, its plan, and links from each edit to its exact diff. You can message the agent from here.</p><span class="go">Open S8 →</span></div></a>
+        <a class="shot" id="screen-s9" href="prototype.html#search"><div class="frame"><iframe src="prototype.html?embed=1#search" loading="lazy" title="S9 Search Everywhere preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S9</div><h3>Search Everywhere</h3><p>Shift twice from anywhere. Tabs for files, symbols, actions, text, and Agents (session history), with author glyphs on results and delegation templates among the actions.</p><span class="go">Open S9 →</span></div></a>
+        <a class="shot" id="screen-s10" href="prototype.html#terminal"><div class="frame"><iframe src="prototype.html?embed=1#terminal" loading="lazy" title="S10 Terminal tracking preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S10</div><h3>Terminal tracking</h3><p>A CLI you started by hand is detected and tracked. The banner says how precise attribution is (“hooks: certain” or “watching files: likely”) and links to the opt-in hook.</p><span class="go">Open S10 →</span></div></a>
+        <a class="shot" id="screen-s11" href="prototype.html#settings"><div class="frame"><iframe src="prototype.html?embed=1#settings" loading="lazy" title="S11 Settings preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S11</div><h3>Settings: Agents and Trust</h3><p>Detected adapters and versions, default trust for headless and interactive work, remembered approvals you can revoke, precise tracking, sharing your editor focus (off by default), and history retention.</p><span class="go">Open S11 →</span></div></a>
+        <a class="shot" id="screen-s12" href="prototype.html#learning"><div class="frame"><iframe src="prototype.html?embed=1#learning" loading="lazy" title="S12 Learning preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S12</div><h3>Learning</h3><p>A lesson tab with an exercise in its own worktree and a tutor running the Observe profile: it explains and hints, and does not write the solution unless asked.</p><span class="go">Open S12 →</span></div></a>
+        <a class="shot" id="screen-s13" href="prototype.html#welcome"><div class="frame"><iframe src="prototype.html?embed=1#welcome" loading="lazy" title="S13 Welcome preview" tabindex="-1" aria-hidden="true"></iframe></div><div class="txt"><div class="sid">S13</div><h3>Welcome and first run</h3><p>Choose a project folder (the access is remembered), check the tools Studio found, pick a keymap and the default trust. Every step can be skipped and revisited in Settings.</p><span class="go">Open S13 →</span></div></a>
+      </div>
+    </section>
+
+    <section id="flows" aria-labelledby="flows-h">
+      <h2 id="flows-h">8. Key flows</h2>
+      <div class="grid c2">
+        <div class="flow"><h3>F1 · Delegate and review</h3><ol><li>⌘⇧Y opens Delegate with the selection as context.</li><li>Worktree and Propose, then Delegate. A card appears in Mission Control.</li><li>When it finishes, Review ready enters the queue.</li><li>Review Inbox: J/K through hunks, A/X, then Apply.</li></ol><a href="prototype.html#delegate">Try it in S3 →</a></div>
+        <div class="flow"><h3>F2 · Pair in a terminal</h3><ol><li>Type <code>claude</code> in a terminal; the tracking banner appears.</li><li>The agent’s edits show live: presence cursor, violet gutter marks.</li><li>AI Changes counts climb; review turn by turn on the timeline.</li></ol><a href="prototype.html#terminal">Try it in S10 →</a></div>
+        <div class="flow"><h3>F3 · Approve a risky command</h3><ol><li>The Needs-you count rises with one soft pulse; focus stays where it is.</li><li>Open the queue when ready: command, reason, risk.</li><li>“Allow for this session” or “Always allow” stores a rule you can revoke in Settings.</li></ol><a href="prototype.html#approval">Try it in S6 →</a></div>
+        <div class="flow"><h3>F4 · Answer a question</h3><ol><li>The question appears in the queue and on the agent’s card.</li><li>Pick an option or type an answer.</li><li>The agent carries on; the item resolves.</li></ol><a href="prototype.html#question">Try it in S7 →</a></div>
+        <div class="flow"><h3>F5 · Revert one agent change next to your edit</h3><ol><li>Click the violet gutter mark, then “Revert this change”.</li><li>A 3-way revert keeps your neighbouring lines; an Undo toast offers the safety checkpoint.</li><li>If the change overlaps your edit, Studio refuses and points you to the merge view.</li></ol><a href="prototype.html#workspace">Try it in S1 →</a></div>
+        <div class="flow"><h3>F6 · Contested save</h3><ol><li>The agent edits a file you have unsaved changes in.</li><li>Banner: “Claude changed this file 3 s ago. Saving will merge.”</li><li>On save, a clean merge writes silently; a conflict opens the merge view.</li></ol><a href="prototype.html#workspace">See the banner in S1 →</a></div>
+        <div class="flow"><h3>F7 · Parallel agents</h3><ol><li>Three tasks run in separate worktrees.</li><li>Mission Control shows three cards in distinct session hues.</li><li>Each has its own AI Changes view, with no cross-attribution.</li></ol><a href="prototype.html#mission-control">Try it in S2 →</a></div>
+        <div class="flow"><h3>F8 · Learn with a tutor</h3><ol><li>Open a lesson; Studio scaffolds the exercise in a worktree and attaches the tutor.</li><li>Check runs the exercise’s own tests.</li><li>Ask for a hint; fix the code yourself; Check again.</li></ol><a href="prototype.html#learning">Try it in S12 →</a></div>
+      </div>
+    </section>
+
+    <section id="states" aria-labelledby="states-h">
+      <h2 id="states-h">9. States and edge cases</h2>
+      <div class="tbl"><table class="t">
+        <thead><tr><th scope="col">Situation</th><th scope="col">What you see</th></tr></thead>
+        <tbody>
+          <tr><td>No agents running</td><td>The pill hides; Mission Control shows “No agents running. Delegate a task or run an agent CLI in a terminal.”</td></tr>
+          <tr><td>Agent CLI not installed</td><td>Delegate disables that adapter with an install hint; Settings shows the detection result.</td></tr>
+          <tr><td>Untested CLI version</td><td>The adapter shows “untested version”; attribution may fall back to likely; a one-time banner explains.</td></tr>
+          <tr><td>Tracking degraded (hook unreachable, watcher overflow)</td><td>Amber banner in the terminal and AI Changes: “Some changes in this period are marked likely.”</td></tr>
+          <tr><td>Agent crashed</td><td>The card moves to Failed with the last error; actions: View console, Retry, Discard worktree.</td></tr>
+          <tr><td>Budget or time limit reached</td><td>The card says “Stopped at limit”; the work so far stays reviewable.</td></tr>
+          <tr><td>Agent interrupted</td><td>The editor banner says the session stopped; its changes stay in AI Changes; the card offers Resume.</td></tr>
+          <tr><td>Large diff (over 2,000 lines)</td><td>The inbox pages by file; Accept file and Reject file come first.</td></tr>
+          <tr><td>Binary or large file changed</td><td>The hunk card says “Binary file changed” or “Large file changed (not restorable)” (Design 1, CL-01).</td></tr>
+          <tr><td>Not a git project</td><td>AI Changes works the same; “Your earlier changes” is empty; worktree mode becomes a scratch copy.</td></tr>
+          <tr><td>Low-confidence attribution</td><td>Faded mark and “likely” in the line card; nothing is hidden.</td></tr>
+          <tr><td>Studio relaunched mid-session</td><td>Sessions reappear with their state; terminals replay scrollback; nothing asks you to approve again.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="keyboard" aria-labelledby="keyboard-h">
+      <h2 id="keyboard-h">10. Keyboard</h2>
+      <p>JetBrains-compatible by default (ARCHITECTURE §11.3). New bindings are proposals; task T16’s conflict checker settles them.</p>
+      <div class="tbl"><table class="t">
+        <thead><tr><th scope="col">Action</th><th scope="col">Keys</th></tr></thead>
+        <tbody>
+          <tr><td>Search Everywhere</td><td><kbd>⇧</kbd> <kbd>⇧</kbd></td></tr>
+          <tr><td>Find Action</td><td><kbd>⌘⇧A</kbd></td></tr>
+          <tr><td>Delegate…</td><td><kbd>⌘⇧Y</kbd> (proposed)</td></tr>
+          <tr><td>Open the Needs-you queue</td><td><kbd>⌥⌘Y</kbd> (proposed)</td></tr>
+          <tr><td>Next / previous agent change in the editor</td><td><kbd>⌃⌥⇧↓</kbd> / <kbd>⌃⌥⇧↑</kbd> (proposed, mirrors IntelliJ’s next change)</td></tr>
+          <tr><td>Mission Control</td><td><kbd>⌘8</kbd> (proposed)</td></tr>
+          <tr><td>Review Inbox: next / previous hunk</td><td><kbd>J</kbd> / <kbd>K</kbd></td></tr>
+          <tr><td>Accept / reject hunk</td><td><kbd>A</kbd> / <kbd>X</kbd></td></tr>
+          <tr><td>Accept / reject the rest of the file</td><td><kbd>⇧A</kbd> / <kbd>⇧X</kbd></td></tr>
+          <tr><td>Apply accepted hunks</td><td><kbd>⌘↩</kbd></td></tr>
+          <tr><td>Approval: allow once / deny / allow for the session</td><td><kbd>⌘↩</kbd> / <kbd>⌘⌫</kbd> / <kbd>⌥⌘↩</kbd></td></tr>
+          <tr><td>Interrupt the focused agent</td><td><kbd>⌘.</kbd></td></tr>
+          <tr><td>Settings</td><td><kbd>⌘,</kbd></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="a11y" aria-labelledby="a11y-h">
+      <h2 id="a11y-h">11. Accessibility</h2>
+      <ul>
+        <li><strong>Contrast.</strong> The token tables meet WCAG 2.x AA: 4.5:1 for text, 3:1 for controls, focus, and session hues. Increase Contrast swaps hairlines for control borders and tertiary text for secondary.</li>
+        <li><strong>Never color alone.</strong> Actor shapes, +/− signs in diffs, text labels on every status.</li>
+        <li><strong>VoiceOver.</strong> Every glyph has a spoken label; gutter marks say “line 20, written by Claude, then edited by you”. Agent state changes use a polite live region; nothing is assertive except an approval you opened yourself.</li>
+        <li><strong>Focus.</strong> Approvals, questions, and toasts never take focus. Focus order follows the layout; every tool window is reachable by shortcut and Tab. After deciding a hunk, focus stays on that hunk.</li>
+        <li><strong>Motion.</strong> With Reduce Motion, presence carets and pulses stop, panels appear without sliding, and the timeline jumps instead of easing.</li>
+        <li><strong>Transparency.</strong> With Reduce Transparency, vibrancy materials become solid chrome and panel surfaces.</li>
+        <li><strong>Text size.</strong> UI 11–17 pt through the font-size setting, code 10–24 pt; layouts reflow without clipping.</li>
+      </ul>
+    </section>
+
+    <section id="writing" aria-labelledby="writing-h">
+      <h2 id="writing-h">12. Writing for the UI</h2>
+      <ul>
+        <li>Name agents by <strong>session title</strong> (“token-refresh”), with the CLI where it matters (“Claude · token-refresh”).</li>
+        <li>Use plain status verbs: “Editing session.ts”, “Running npm test”, “Waiting for your approval”, “Ready for review”.</li>
+        <li>Say <strong>Needs you</strong>, not “Pending”. Say <strong>agent</strong>, not “AI says”.</li>
+        <li>Numbers carry meaning: “3 files · +28 −4 · 5 hunks to review”.</li>
+        <li>Notifications: “Claude changed 3 files (+28 −4). Open AI Changes.” · “checkout-tests wants to run npm install. Review.” · “rate-limit is ready for review: tests passed.”</li>
+        <li>Errors say what happened and what to do: “Claude CLI wasn’t found on PATH. Install it or set its path in Settings → Agents.”</li>
+      </ul>
+    </section>
+
+    <section id="handoff" aria-labelledby="handoff-h">
+      <h2 id="handoff-h">13. Implementation handoff</h2>
+      <div class="tbl"><table class="t">
+        <thead><tr><th scope="col">Screen or component</th><th scope="col">Owner task (BUILD_WORKFLOW)</th></tr></thead>
+        <tbody>
+          <tr><td>Tokens, theming, component conventions</td><td>T10 (copy <a href="assets/tokens.css">tokens.css</a> to <code>app/ui/src/theme/</code>)</td></tr>
+          <tr><td>Shell: toolbar, stripes, docking, status bar</td><td>T11</td></tr>
+          <tr><td>Project tree and author badges</td><td>T13, T37</td></tr>
+          <tr><td>Editor, provenance gutter, contested banner</td><td>T14, T37</td></tr>
+          <tr><td>AI Changes and timeline</td><td>T36</td></tr>
+          <tr><td>Review Inbox</td><td>T38</td></tr>
+          <tr><td>Agent Console, history, context actions</td><td>T39</td></tr>
+          <tr><td>Mission Control, Needs-you queue, approval and question cards, presence cursors, toolbar pill</td><td>T45 if the H-deltas are accepted; otherwise a reduced pill in T39</td></tr>
+          <tr><td>Settings → Agents and Trust</td><td>T18 (shell), T46 (trust and rules)</td></tr>
+          <tr><td>Git commit by origin</td><td>T51</td></tr>
+          <tr><td>Accessibility audit</td><td>T62</td></tr>
+          <tr><td>Learning views</td><td>T72, T73</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout">Visual tests: Playwright renders each screen against a mock core, with fixtures named after this page (<code>S1-workspace</code>, <code>S2-mission-control</code>, …), and compares screenshots in dark, light, and increased contrast. The prototype’s <code>?embed=1#screen</code> URLs are a ready-made starting point.</div>
+    </section>
+  </main>
+</div>
+
+<footer class="foot">
+  Part of the Studio design set: <a href="../../index.html">overview</a> · Design 1, architecture (HLD and LLD) and Design 2, agent build workflow, are Markdown files in <code>docs/design/</code> that render on GitHub with diagrams. The prototype is static HTML, CSS, and JavaScript with no build step.
+</footer>
+
+<script src="assets/icons.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

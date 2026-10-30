@@ -1347,7 +1347,7 @@ app/ui/src/
   commands/      registry: id, title, default keys, when-clause, handler. Feeds native menus, the palette,
                  Search Everywhere actions, and keymaps from one source
   shell/         dockview layout, tool-window bars, toolbar, status bar, layout persistence per project
-  theme/         design tokens (Design 3), light/dark/increased contrast, motion
+  theme/         design tokens (from docs/design/ui/assets/tokens.css), light/dark/increased contrast, motion
   editor/ terminal/ project-view/ ai-changes/ review-inbox/ mission-control/ attention/ agents/
   search/ git/ run/ problems/ learning/ settings/
 ```

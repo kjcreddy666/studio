@@ -1,0 +1,212 @@
+/*
+  Studio design tokens.
+
+  Source for app/ui/src/theme/tokens.css (task T10). Studio follows the system
+  appearance: dark is the default here, and the light values live under
+  [data-appearance="light"]. This review site renders dark only.
+  Contrast ratios for every text and control token are computed live on the
+  spec page (index.html#tokens) from the values in this file.
+*/
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --surface-canvas: #131316;      /* editor, diff bodies */
+  --surface-panel: #18181C;       /* tool windows */
+  --surface-chrome: #202026;      /* toolbar, stripes, status bar */
+  --surface-elevated: #26262D;    /* cards, popovers, sheets */
+  --surface-hover: #2C2C34;
+  --surface-active: #34343E;
+  --surface-pressed: #3A3A46;
+  --surface-selected: #25344A;
+  --surface-desktop: #0B0B0E;     /* review site backdrop only */
+
+  /* Lines */
+  --line-hairline: #2E2E36;       /* decoration only */
+  --line-strong: #3A3A44;
+  --line-control: #73737F;        /* control borders, >= 3:1 */
+  --focus-ring: #4DA3FF;
+
+  /* Text */
+  --text-primary: #EDEDF2;
+  --text-secondary: #B4B4C0;
+  --text-tertiary: #8D8D9A;
+  --text-disabled: #5E5E69;
+
+  /* Accent (replaced at runtime by the macOS accent color when it keeps 4.5:1) */
+  --accent-text: #4DA3FF;
+  --accent-fill: #0870E0;
+  --accent-fill-hover: #0764C9;
+  --on-accent: #FFFFFF;
+
+  /* Status */
+  --success: #3DDC84;
+  --warning: #FFD60A;
+  --danger: #FF6B5E;
+  --info: #64D2FF;
+  --accept-fill: #1F6F43;
+
+  /* Actors: shape is the primary signal, color the secondary */
+  --actor-you: #5AA7FF;
+  --actor-ai: #B79CFF;
+  --actor-external: #F2B44B;
+  --actor-studio: #9BA3AF;
+
+  /* Agent session hues (presence cursors, cards, console headers) */
+  --hue-violet: #B79CFF;
+  --hue-pink: #F28FD0;
+  --hue-cyan: #5ED6E6;
+  --hue-lime: #A6E35A;
+  --hue-orange: #FF9F5A;
+  --on-hue: #17131F;
+
+  /* Diff and attribution tints */
+  --diff-add-bg: #192F25;
+  --diff-del-bg: #341F20;
+  --diff-ai-tint: #23212D;
+  --line-ai-tint: #1D1B27;
+  --line-you-tint: #151D28;
+  --diff-empty: #16161A;
+
+  /* Tinted containers */
+  --ai-bg: #1E1C27;
+  --ai-border: #3A3448;
+  --ai-pill-bg: #23212D;
+  --ai-pill-border: #4A4458;
+  --warn-bg: #3A3320;
+  --warn-border: #8A7520;
+  --warn-banner-bg: #2A2616;
+  --warn-banner-border: #5A4C1C;
+  --ok-bg: #15281E;
+  --ok-border: #22553A;
+  --danger-bg: #341F20;
+  --question-bg: #1C3036;
+  --review-bg: #1E2E1A;
+
+  /* Syntax (kept clear of the actor blue, violet, and amber) */
+  --syntax-plain: #DADAE2;
+  --syntax-keyword: #E39AC4;
+  --syntax-string: #9FD39A;
+  --syntax-number: #D7BA7D;
+  --syntax-function: #8ED1E0;
+  --syntax-type: #D8D2A8;
+  --syntax-comment: #8D8D9A;
+  --syntax-punct: #B4B4C0;
+
+  /* Type */
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+  --font-code: "SF Mono", ui-monospace, Menlo, "JetBrains Mono", monospace;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-15: 15px;
+  --text-17: 17px;
+  --text-22: 22px;
+  --leading-ui: 1.35;
+  --leading-code: 1.5;
+
+  /* Space (4-pt grid), shape, elevation */
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 20px;
+  --space-7: 24px;
+  --space-8: 32px;
+  --radius-control: 4px;
+  --radius-card: 6px;
+  --radius-popover: 8px;
+  --radius-sheet: 12px;
+  --shadow-e2: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-e3: 0 20px 60px rgba(0, 0, 0, 0.55);
+
+  /* Motion */
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 260ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Layout */
+  --toolbar-h: 52px;
+  --stripe-w: 40px;
+  --statusbar-h: 24px;
+  --tab-h: 34px;
+  --panel-head-h: 30px;
+}
+
+/* Light appearance (the app applies this when macOS is in light mode). */
+[data-appearance="light"] {
+  color-scheme: light;
+  --surface-canvas: #FFFFFF;
+  --surface-panel: #F6F6F8;
+  --surface-chrome: #ECECF0;
+  --surface-elevated: #FFFFFF;
+  --surface-hover: #E6E6EB;
+  --surface-active: #DCDCE2;
+  --surface-pressed: #D2D2DA;
+  --surface-selected: #DCE8F8;
+  --line-hairline: #E1E1E6;
+  --line-strong: #D0D0D7;
+  --line-control: #82828E;
+  --focus-ring: #0062CC;
+  --text-primary: #1D1D1F;
+  --text-secondary: #4A4A55;
+  --text-tertiary: #63636E;
+  --text-disabled: #A0A0AA;
+  --accent-text: #0062CC;
+  --accent-fill: #0062CC;
+  --accent-fill-hover: #0055B3;
+  --success: #15703A;
+  --warning: #7A5A00;
+  --danger: #C4281C;
+  --info: #006A93;
+  --accept-fill: #15703A;
+  --actor-you: #0A63C9;
+  --actor-ai: #6E3FD1;
+  --actor-external: #8F5600;
+  --actor-studio: #5A6170;
+  --hue-violet: #6E3FD1;
+  --hue-pink: #B0247A;
+  --hue-cyan: #00717D;
+  --hue-lime: #3C7300;
+  --hue-orange: #B04A00;
+  --on-hue: #FFFFFF;
+  --diff-add-bg: #E6F4EA;
+  --diff-del-bg: #FCE8E6;
+  --diff-ai-tint: #F1ECFC;
+  --line-ai-tint: #F6F2FE;
+  --line-you-tint: #EEF5FD;
+  --diff-empty: #F3F3F6;
+  --ai-bg: #F4F0FD;
+  --ai-border: #D8CCF5;
+  --ai-pill-bg: #F4F0FD;
+  --ai-pill-border: #D8CCF5;
+  --warn-bg: #FFF4CC;
+  --warn-border: #C9A227;
+  --warn-banner-bg: #FFF8DB;
+  --warn-banner-border: #E5CF7A;
+  --ok-bg: #E6F4EA;
+  --ok-border: #A8D5B5;
+  --danger-bg: #FCE8E6;
+  --question-bg: #E0F3F5;
+  --review-bg: #E9F4DC;
+  --syntax-plain: #24242A;
+  --syntax-keyword: #A3216F;
+  --syntax-string: #2F6B2A;
+  --syntax-number: #8A5A00;
+  --syntax-function: #00657A;
+  --syntax-type: #6B5B00;
+  --syntax-comment: #63636E;
+  --syntax-punct: #4A4A55;
+  --shadow-e2: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-e3: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+/* Increase Contrast: hairlines become control borders, tertiary text becomes secondary. */
+@media (prefers-contrast: more) {
+  :root {
+    --line-hairline: var(--line-control);
+    --text-tertiary: var(--text-secondary);
+  }
+}
